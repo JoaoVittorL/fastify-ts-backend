@@ -1,16 +1,18 @@
-// src/app.ts
 import Fastify from "fastify";
+import cors from "@fastify/cors";
 import { loggerOptions } from "./common/logger";
-import { userRoutes } from "./modules/users/user.routes";
+import { userRoutes } from "./infrastructure/http/routes/user.routes";
 import prisma from "./common/prismaClient";
 
 export function buildApp() {
   const app = Fastify({ logger: loggerOptions });
 
-  // adiciona prisma no Fastify
+  app.register(cors, {
+    origin: "*",
+  });
+
   app.decorate("prisma", prisma);
 
-  // registra rotas
   app.register(userRoutes, { prefix: "/users" });
 
   return app;
